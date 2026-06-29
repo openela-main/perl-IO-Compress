@@ -14,11 +14,13 @@
 
 Name:           perl-IO-Compress
 Version:        2.212
-Release:        512%{?dist}
+Release:        512%{?dist}.1
 Summary:        Read and write compressed data
 License:        GPL-1.0-or-later OR Artistic-1.0-Perl
 URL:            https://metacpan.org/release/IO-Compress
 Source0:        https://cpan.metacpan.org/modules/by-module/IO/IO-Compress-%{version}.tar.gz
+# https://github.com/pmqs/IO-Compress/commit/f2db247bf90d4cc7ee2710be384946081f3b4610
+Patch0:         RHEL-180415.patch
 BuildArch:      noarch
 # Module Build
 BuildRequires:  coreutils
@@ -116,6 +118,7 @@ with "%{_libexecdir}/%{name}/test".
 
 %prep
 %setup -q -n IO-Compress-%{version}
+%patch -P0 -p1
 
 # Remove spurious exec permissions
 chmod -c -x lib/IO/Uncompress/{Adapter/Identity,RawInflate}.pm
@@ -209,6 +212,10 @@ make test COMPRESS_ZLIB_RUN_%{?with_long_tests:ALL}%{!?with_long_tests:MOST}=1
 %{_libexecdir}/%{name}
 
 %changelog
+* Wed Jun 03 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 2.212-512.1
+- Fix CVE-2026-48962: remove use of eval in File::GlobMapper
+- Resolves: RHEL-180415
+
 * Tue Oct 29 2024 Troy Dawson <tdawson@redhat.com> - 2.212-512
 - Bump release for October 2024 mass rebuild:
   Resolves: RHEL-64018
