@@ -11,11 +11,12 @@
 
 Name:           perl-IO-Compress
 Version:        2.096
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Read and write compressed data
 License:        GPL+ or Artistic
 URL:            https://metacpan.org/release/IO-Compress
 Source0:        https://cpan.metacpan.org/modules/by-module/IO/IO-Compress-%{version}.tar.gz
+Patch0:         IO-Compress-2.096-remove_use_of_eval_in_globmapper.patch
 BuildArch:      noarch
 # Module Build
 BuildRequires:  coreutils
@@ -93,6 +94,7 @@ included with the IO-Compress distribution:
 
 %prep
 %setup -q -n IO-Compress-%{version}
+%patch -P0 -p1
 
 # Remove spurious exec permissions
 chmod -c -x lib/IO/Uncompress/{Adapter/Identity,RawInflate}.pm
@@ -144,6 +146,10 @@ make test COMPRESS_ZLIB_RUN_%{?with_long_tests:ALL}%{!?with_long_tests:MOST}=1
 %{_mandir}/man3/IO::Uncompress::*.3*
 
 %changelog
+* Fri Jun 12 2026 Michal Josef Špaček <mspacek@redhat.com> - 2.096-2
+- Resolves arbitrary code execution via attacker-controlled output glob (CVE-2026-48962)
+  Resolves: RHEL-180421
+
 * Sat Aug  1 2020 Paul Howarth <paul@city-fan.org> - 2.096-1
 - 2.096 bump
 
