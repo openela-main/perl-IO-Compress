@@ -11,11 +11,13 @@
 
 Name:           perl-IO-Compress
 Version:        2.081
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Read and write compressed data
 License:        GPL+ or Artistic
 URL:            http://search.cpan.org/dist/IO-Compress/
 Source0:        http://search.cpan.org/CPAN/authors/id/P/PM/PMQS/IO-Compress-%{version}.tar.gz
+# https://github.com/pmqs/IO-Compress/commit/f2db247bf90d4cc7ee2710be384946081f3b4610
+Patch0:         RHEL-180411.patch
 BuildArch:      noarch
 # Module Build
 BuildRequires:  coreutils
@@ -91,6 +93,7 @@ included with the IO-Compress distribution:
 
 %prep
 %setup -q -n IO-Compress-%{version}
+%patch0 -p1
 
 # Remove spurious exec permissions
 chmod -c -x lib/IO/Uncompress/{Adapter/Identity,RawInflate}.pm
@@ -141,6 +144,10 @@ make test COMPRESS_ZLIB_RUN_%{?with_long_tests:ALL}%{!?with_long_tests:MOST}=1
 %{_mandir}/man3/IO::Uncompress::*.3*
 
 %changelog
+* Wed Jun 03 2026 RHEL Packaging Agent <redhat-ymir-agent@redhat.com> - 2.081-2
+- Remove use of eval in File::GlobMapper for safer string interpolation
+- Resolves: RHEL-180411
+
 * Mon Apr 09 2018 Jitka Plesnikova <jplesnik@redhat.com> - 2.081-1
 - 2.081 bump
 
